@@ -1,0 +1,25 @@
+galaxy_info:
+  role_name: ubuntu_hardening
+  author: "Sebastián García"
+  description: >
+    Ansible role to harden Ubuntu 24.04+ servers:
+    SSH, UFW, auditd, kernel hardening, password policies,
+    core dumps, GRUB permissions, and optional IPv6 disable.
+  company: "Personal Security Portfolio"
+  license: MIT
+  min_ansible_version: 2.13
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 24.04
+        - 24.10
+
+  galaxy_tags:
+    - security
+    - hardening
+    - sysadmin
+    - secops
+    - linux
+
+dependencies: []

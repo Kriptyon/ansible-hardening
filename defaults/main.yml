@@ -1,0 +1,15 @@
+ssh_port: 22
+disable_ipv6: false
+password_max_days: 90
+password_min_days: 7
+password_warn_age: 14
+password_minlen: 12
+services_to_remove:
+  - telnetd
+  - ftp
+  - rsh-server
+  - rsh-client
+  - tftp
+  - avahi-daemon
+  - cups
+  - rpcbind
