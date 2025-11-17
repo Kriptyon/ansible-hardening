@@ -1,0 +1,78 @@
+---
+# tasks/04-security-policies.yml
+# Based on steps 6, 7, 9, 10, 11, 12 of https://github.com/Kriptyon/ubuntu-manual-hardening
+
+
+- name: "Step 6: Apply password age policies (login.defs)"
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: "^{{ item.key }}"
+    line: "{{ item.key }}\t{{ item.value }}"
+  loop:
+    - { key: 'PASS_MAX_DAYS', value: '{{ hardening_pw_max_days }}' }
+    - { key: 'PASS_MIN_DAYS', value: '{{ hardening_pw_min_days }}' }
+    - { key: 'PASS_WARN_AGE', value: '{{ hardening_pw_warn_age }}' }
+
+- name: "Step 6: Install libpam-pwquality"
+  ansible.builtin.apt:
+    name: libpam-pwquality
+    state: present
+
+- name: "Step 6: Configure pwquality.conf"
+  ansible.builtin.lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: "^{{ item.key }}"
+    line: "{{ item.key }} = {{ item.value }}"
+  loop:
+    - { key: 'minlen', value: '{{ hardening_pw_minlen }}' }
+    - { key: 'dcredit', value: '-1' }
+    - { key: 'ucredit', value: '-1' }
+    - { key: 'ocredit', value: '-1' }
+    - { key: 'lcredit', value: '-1' }
+
+- name: "Step 7: Harden permissions for critical files"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: '/etc/shadow', mode: '0600' }
+    - { path: '/etc/passwd', mode: '0644' }
+    - { path: '/etc/ssh/sshd_config', mode: '0600' }
+
+- name: "Step 9: Apply Kernel Hardening (sysctl)"
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-hardening.conf
+    reload: yes
+  loop:
+    - { key: 'kernel.kptr_restrict', value: '2' }
+    - { key: 'kernel.dmesg_restrict', value: '1' }
+    - { key: 'net.ipv4.conf.all.rp_filter', value: '1' }
+    - { key: 'net.ipv4.conf.default.rp_filter', value: '1' }
+    - { key: 'net.ipv4.conf.all.log_martians', value: '1' }
+    - { key: 'net.ipv4.tcp_syncookies', value: '1' }
+
+- name: "Step 10: Disable IPv6 (Optional)"
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-disable-ipv6.conf
+    reload: yes
+  loop:
+    - { key: 'net.ipv6.conf.all.disable_ipv6', value: '1' }
+    - { key: 'net.ipv6.conf.default.disable_ipv6', value: '1' }
+  when: hardening_disable_ipv6 == true
+
+- name: "Step 11: Disable core dumps"
+  ansible.builtin.lineinfile:
+    path: /etc/security/limits.conf
+    line: '* hard core 0'
+    state: present
+
+- name: "Step 12: Harden GRUB permissions"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: '0600'
+  with_fileglob:
+    - /etc/grub.d/*

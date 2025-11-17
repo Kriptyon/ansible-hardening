@@ -1,10 +1,13 @@
-ssh_port: 22
-disable_ipv6: false
-password_max_days: 90
-password_min_days: 7
-password_warn_age: 14
-password_minlen: 12
-services_to_remove:
+# Translationg variables from  https://github.com/Kriptyon/ubuntu-manual-hardening
+
+# [STEP 3] Allow SSH Port
+hardening_ssh_port: 22
+
+# [STEP 10] Disable IPv6
+hardening_disable_ipv6: false
+
+# [STEP 5] Services to delete
+hardening_services_to_remove:
   - telnetd
   - ftp
   - rsh-server
@@ -13,3 +16,9 @@ services_to_remove:
   - avahi-daemon
   - cups
   - rpcbind
+
+# [STEP 6] Password Policies
+hardening_pw_max_days: 90
+hardening_pw_min_days: 7
+hardening_pw_warn_age: 14
+hardening_pw_minlen: 12

@@ -1,6 +1,6 @@
----
-# restart SSH after hardening
-- name: restart sshd
+# handlers/main.yml
+
+- name: Restart SSH
   ansible.builtin.service:
-    name: ssh
+    name: ssh # Ansible is smart enough to find 'ssh' or 'sshd'
     state: restarted

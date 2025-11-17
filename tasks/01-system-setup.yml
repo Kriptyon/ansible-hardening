@@ -1,0 +1,32 @@
+# tasks/01-system-setup.yml
+# Based on steps 1, 2, 5, 8 of https://github.com/Kriptyon/ubuntu-manual-hardening
+
+- name: "Step 1: Update APT cache and upgrade"
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: full
+  register: apt_upgrade
+  changed_when: "'No packages' not in apt_upgrade.stdout" # Avoid using "changed" if there is nothing to update.
+- name: "Step 2: Ensure that unattended-upgrades is installed"
+  ansible.builtin.apt:
+    name: unattended-upgrades
+    state: present
+
+- name: "Step 5: Purge unsafe/legacy services"
+  ansible.builtin.apt:
+    name: "{{ hardening_services_to_remove }}"
+    state: absent
+    purge: yes
+
+- name: "Step 8: Install auditd"
+  ansible.builtin.apt:
+    name:
+      - auditd
+      - audispd-plugins
+    state: present
+
+- name: "Step 8: Ensure that auditd is enabled and running"
+  ansible.builtin.service:
+    name: auditd
+    state: started
+    enabled: yes

@@ -1,0 +1,25 @@
+# tasks/02-firewall.yml
+# Based on step 3 of https://github.com/Kriptyon/ubuntu-manual-hardening
+
+- name: "Step 3: Install UFW if it does not exist"
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+
+- name: "Step 3: Configure UFW default policies"
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: "Step 3: Allow outgoing traffic"
+  community.general.ufw:
+    policy: allow
+    direction: outgoing
+
+- name: "Step 3: Allow SSH on the configured port"
+  community.general.ufw:
+    rule: allow
+    port: "{{ hardening_ssh_port }}"
+    proto: tcp
+    comment: "Allow SSH (Ansible Hardening)"

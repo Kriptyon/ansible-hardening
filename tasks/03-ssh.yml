@@ -1,0 +1,51 @@
+# tasks/03-ssh.yml
+# Based on step 4 of https://github.com/Kriptyon/ubuntu-manual-hardening
+
+- name: "Step 4: Ensure PermitRootLogin is not"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+    validate: 'sshd -t -f %s' # Validate the file before saving!
+  notify: Reiniciar SSH # Call the handler if this changes
+
+- name: "Step 4: Ensuring X11Forwarding no"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*X11Forwarding'
+    line: 'X11Forwarding no'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+
+- name: "Step 4: Ensure LogLevel VERBOSE"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*LogLevel'
+    line: 'LogLevel VERBOSE'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: Restart SSH
+
+#  YOUR  SECURITY LOGIC, TRANSLATED INTO ANSIBLE 
+
+- name: "Step 4 (Security): Check if 'authorized_keys' exists and has content"
+  ansible.builtin.slurp:
+    src: "/home/{{ ansible_user }}/.ssh/authorized_keys" # 'ansible_user' is the user you log in with
+  register: auth_keys_file
+  ignore_errors: yes
+
+- name: "Step 4 (Security): Calculate whether it is safe to disable passwords"
+  ansible.builtin.set_fact:
+    safe_to_disable_passwords: (ansible_connection != 'ssh') or (auth_keys_file.content | b64decode | length > 0)
+
+- name: "Step 4: Disable Password Authentication (ONLY IF IT IS SECURE)"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
+    validate: 'sshd -t -f %s'
+  when: safe_to_disable_passwords
+  notify: Restart SSH
