@@ -8,7 +8,7 @@
     line: 'PermitRootLogin no'
     state: present
     validate: 'sshd -t -f %s' # Validate the file before saving!
-  notify: Reiniciar SSH # Call the handler if this changes
+  notify: Restart SSH # Call the handler if this changes
 
 - name: "Step 4: Ensuring X11Forwarding no"
   ansible.builtin.lineinfile:
@@ -38,7 +38,7 @@
 
 - name: "Step 4 (Security): Calculate whether it is safe to disable passwords"
   ansible.builtin.set_fact:
-    safe_to_disable_passwords: (ansible_connection != 'ssh') or (auth_keys_file.content | b64decode | length > 0)
+    safe_to_disable_passwords: "{{ (ansible_connection != 'ssh') or (auth_keys_file.content | b64decode | length > 0) }}"
 
 - name: "Step 4: Disable Password Authentication (ONLY IF IT IS SECURE)"
   ansible.builtin.lineinfile:
@@ -47,5 +47,5 @@
     line: 'PasswordAuthentication no'
     state: present
     validate: 'sshd -t -f %s'
-  when: safe_to_disable_passwords
+  when: safe_to_disable_passwords | bool
   notify: Restart SSH

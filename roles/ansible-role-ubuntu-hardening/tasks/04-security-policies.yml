@@ -70,9 +70,16 @@
     line: '* hard core 0'
     state: present
 
-- name: "Step 12: Harden GRUB permissions"
+- name: "Step 12: Find files in /etc/grub.d (if it exists)"
+  ansible.builtin.find:
+    paths: /etc/grub.d
+    file_type: file
+  register: grub_files
+  ignore_errors: yes # No fallar si /etc/grub.d no existe
+
+- name: "Step 12: Harden GRUB file permissions"
   ansible.builtin.file:
     path: "{{ item.path }}"
     mode: '0600'
-  with_fileglob:
-    - /etc/grub.d/*
+  loop: "{{ grub_files.files | default([]) }}" # Bucle sobre los archivos (o una lista vacía)
+  when: grub_files.files is defined

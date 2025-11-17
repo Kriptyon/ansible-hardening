@@ -22,7 +22,6 @@
   ansible.builtin.apt:
     name:
       - auditd
-      - audispd-plugins
     state: present
 
 - name: "Step 8: Ensure that auditd is enabled and running"
