@@ -42,7 +42,7 @@ ansible_hardening/
 ### 1. Clone the repository
 
 ```bash
-git clone [https://github.com/Kriptyon/ansible-hardening.git]
+git clone https://github.com/Kriptyon/ansible-hardening.git
 cd ansible_hardening
 ```
 
