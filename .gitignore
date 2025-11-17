@@ -1,0 +1,2 @@
+# Ignore AWS private key
+*.pem
