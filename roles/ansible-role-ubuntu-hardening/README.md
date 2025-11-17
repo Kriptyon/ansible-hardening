@@ -47,6 +47,7 @@ cd ansible_hardening
 ### 2. Configure the inventory (inventory.ini)
 Example for an AWS EC2 instance:
 
+```bash
 [servers]
 ec2-34-242-181-22.eu-west-1.compute.amazonaws.com
 
@@ -55,7 +56,7 @@ ansible_user = ubuntu
 ansible_ssh_private_key_file = ./key.pem
 ansible_ssh_common_args = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
 ansible_python_interpreter = /usr/bin/python3.12
-
+```
 
 ### 3. Protect your SSH key
 ```bash
