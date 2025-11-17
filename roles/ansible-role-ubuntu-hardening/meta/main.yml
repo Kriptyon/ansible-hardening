@@ -1,0 +1,28 @@
+---
+galaxy_info:
+  author: Sebastián García
+  description: Applies a security hardening baseline to Ubuntu 24.04+ servers.
+  role_name: ubuntu_hardening
+  
+  license: MIT
+
+  min_ansible_version: "2.12"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - "24.04"
+        - "noble"
+
+  galaxy_tags:
+    - security
+    - hardening
+    - system
+    - ubuntu
+    - server
+    - bastion
+    - ufw
+    - ssh
+
+dependencies: []
+# No dependencies, so this is correct as an empty list.
