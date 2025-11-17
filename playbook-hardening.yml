@@ -1,0 +1,7 @@
+- name: Apply Hardening to Ubuntu Servers
+  hosts: servers 
+  become: yes            # <-- Important! To use 'sudo'
+  
+  roles:
+# Ansible will look for this in the 'roles/' folder
+    - ansible-role-ubuntu-hardening
