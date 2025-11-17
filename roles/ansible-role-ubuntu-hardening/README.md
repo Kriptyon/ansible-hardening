@@ -21,12 +21,14 @@ This Ansible role automates the following hardening tasks:
 
 ## Repository Structure
 
+```bash
 ansible_hardening/
 ├── inventory.ini # Inventory of target hosts
 ├── playbook-hardening.yml # Playbook that runs the role
 ├── roles/
 │ └── ansible-role-ubuntu-hardening/ # Role logic
 └── key.pem # SSH key (add to .gitignore)
+```
 
 
 ## Requirements
