@@ -49,7 +49,7 @@ Example for an AWS EC2 instance:
 
 ```bash
 [servers]
-ec2-34-242-181-22.eu-west-1.compute.amazonaws.com
+xxxxxxxxxx.compute.amazonaws.com
 
 [all:vars]
 ansible_user = ubuntu
